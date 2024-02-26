@@ -30,7 +30,7 @@ def connect():
 '''
 INFO:werkzeug:127.0.0.1 - - [25/Feb/2024 18:56:00] "GET /disconnect HTTP/1.1" 500 -
 '''
-
+# broken
 
 @app.route('/disconnect')
 def disconnect():
