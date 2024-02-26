@@ -1,3 +1,12 @@
+# Jake's Fork
+
+This will eventually serve as the 'server' for a separate web app is the plan. 
+
+Right now (2/25) just added 'app.py', a basic flask app that listens to another repo I made WebAppPrototype. Ports are hard-coded for now. 
+
+Needs 'robot2' conda environment (python2.7)
+
+
 # MorseAPI
 `MorseAPI` is an unofficial (and unsanctioned) python library for controlling
 [Wonder Workshop's](https://www.makewonder.com/)
