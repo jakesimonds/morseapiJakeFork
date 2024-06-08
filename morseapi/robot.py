@@ -101,6 +101,8 @@ class MorseRobot(GenericRobot):
         message = bytearray([COMMANDS[command_name]]) + command_values
         logging.debug(binascii.hexlify(message))
         if self.connection:
+            print("COMMAND")
+            print(binascii.hexlify(message))
             self.connection.char_write_handle(HANDLES["command"], message)
 
     def reset(self, mode=4):

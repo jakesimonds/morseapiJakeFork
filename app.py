@@ -1,28 +1,30 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from morseapi import MorseRobot
+from time import sleep
 import logging
-
+import ast
+import re
 
 app = Flask(__name__)
 
-robot = None
+bot = None
 bot_address = "C2:37:67:68:BD:38"
 
 def get_robot():
-    global robot
-    if robot is None:
-        robot = MorseRobot(bot_address)
-    return robot
+    global bot
+    if bot is None:
+        bot = MorseRobot(bot_address)
+    return bot
 
 @app.route('/connect')
 def connect():
     print("connect!")
-    global robot
+    global bot
     try:
-        if robot is None:
-            robot = MorseRobot(bot_address)
-        robot.connect()
-        robot.reset()
+        if bot is None:
+            bot = MorseRobot(bot_address)
+        bot.connect()
+        bot.reset()
         return jsonify({"status": "connected"})
     except:
         return jsonify({"error": "Failed to connect"}), 500
@@ -35,11 +37,11 @@ INFO:werkzeug:127.0.0.1 - - [25/Feb/2024 18:56:00] "GET /disconnect HTTP/1.1" 50
 @app.route('/disconnect')
 def disconnect():
     print("disconnect!")
-    global robot
+    global bot
     try:
-        if robot is not None:
-            robot.disconnect() # Method must be trash
-            robot = None
+        if bot is not None:
+            bot.disconnect() # Method must be trash
+            bot = None
             return jsonify({"status": "disconnected"})
     except:
         return jsonify({"error": "Failed to disconnect"}), 500
@@ -48,9 +50,9 @@ def disconnect():
 def drive():
     print("forward")
     try:
-        if robot is None:
+        if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        robot.move(500)
+        bot.move(500)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
@@ -59,9 +61,9 @@ def drive():
 def right():
     print("right")
     try:
-        if robot is None:
+        if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        robot.turn(-90)
+        bot.turn(-90)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
@@ -70,9 +72,9 @@ def right():
 def left():
     print("left")
     try:
-        if robot is None:
+        if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        robot.turn(90)
+        bot.turn(90)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
@@ -81,12 +83,74 @@ def left():
 def back():
     print("back")
     try:
-        if robot is None:
+        if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        robot.move(-300)
+        bot.move(-300)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
 
+
+@app.route('/llama', methods=['POST'])
+def llama():
+    data = request.get_json()
+    print("data:")
+    print(data)
+
+    command = data.get(u"command")
+    print("COMMAND:")
+    print(command)
+    try:
+
+        #command_list = ast.literal_eval(command)
+        command_list = re.findall(r'\[([^]]+)\]', command)[0].split(', ')
+        print("Parsed Command List:")
+        print(command_list)
+
+        for item in command_list:
+            print(item)
+            eval(item)
+            sleep(1)
+        # command_list = eval(command)
+        # print("Parsed Command List:")
+        # print(command_list)
+
+        # for item in command_list:
+
+    
+        #     if bot is None:
+        #         return jsonify({"error": "Robot not connected"}), 400
+        #     print(item)
+        #     print(" I PRINTED THE ITEM ^")
+        #     sleep(1)
+
+        #exec(command)
+        return jsonify({"status": "Executed command " + command})
+    except Exception as e:
+        print("Error:", str(e))
+        return jsonify({"error": "Failed to execute command: " + str(e)})
+    #return jsonify({"backAtYa": data})
+    
+    #command = data.get("command")
+    #print("Command: " + command)
+    
+    # try:
+    #     if bot is None:
+    #         return jsonify({"error": "Robot not connected"}), 400
+        
+    #     # Ensure the command is properly prefixed with 'await'
+    #     full_command = "await " + command
+    #     print("Full command: " + full_command)
+        # # Use exec to execute the await command in an async function
+        # local_vars  = { 'bot' : bot }
+        # exec("async def __temp_func():\n    " + full_command, globals(), local_vars)
+        # local_vars['__temp_func']()
+        
+        # return jsonify({"status": "Executed command " + command})
+    # except Exception as e:
+    #     print("Error:", str(e))
+    #     return jsonify({"error": "Failed to execute command: " + str(e)})
+
+
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    app.run(host='0.0.0.0', port=5555, debug=True)
