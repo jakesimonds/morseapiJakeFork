@@ -94,62 +94,19 @@ def back():
 @app.route('/llama', methods=['POST'])
 def llama():
     data = request.get_json()
-    print("data:")
-    print(data)
-
     command = data.get(u"command")
-    print("COMMAND:")
-    print(command)
     try:
-
-        #command_list = ast.literal_eval(command)
         command_list = re.findall(r'\[([^]]+)\]', command)[0].split(', ')
-        print("Parsed Command List:")
-        print(command_list)
 
         for item in command_list:
             print(item)
             eval(item)
             sleep(1)
-        # command_list = eval(command)
-        # print("Parsed Command List:")
-        # print(command_list)
 
-        # for item in command_list:
-
-    
-        #     if bot is None:
-        #         return jsonify({"error": "Robot not connected"}), 400
-        #     print(item)
-        #     print(" I PRINTED THE ITEM ^")
-        #     sleep(1)
-
-        #exec(command)
         return jsonify({"status": "Executed command " + command})
     except Exception as e:
         print("Error:", str(e))
         return jsonify({"error": "Failed to execute command: " + str(e)})
-    #return jsonify({"backAtYa": data})
-    
-    #command = data.get("command")
-    #print("Command: " + command)
-    
-    # try:
-    #     if bot is None:
-    #         return jsonify({"error": "Robot not connected"}), 400
-        
-    #     # Ensure the command is properly prefixed with 'await'
-    #     full_command = "await " + command
-    #     print("Full command: " + full_command)
-        # # Use exec to execute the await command in an async function
-        # local_vars  = { 'bot' : bot }
-        # exec("async def __temp_func():\n    " + full_command, globals(), local_vars)
-        # local_vars['__temp_func']()
-        
-        # return jsonify({"status": "Executed command " + command})
-    # except Exception as e:
-    #     print("Error:", str(e))
-    #     return jsonify({"error": "Failed to execute command: " + str(e)})
 
 
 if __name__ == '__main__':
