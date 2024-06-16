@@ -289,6 +289,7 @@ class MorseRobot(GenericRobot):
         Positive values spin clockwise and negative counter-clockwise.
         :param speed: Speed to turn at, in degrees/second
         """
+        degrees = degrees * -1
         if abs(degrees) > 360:
             raise NotImplementedError("Cannot turn more than one rotation per move")
         if degrees:

@@ -63,7 +63,7 @@ def right():
     try:
         if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        bot.turn(-90)
+        bot.turn(90)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
@@ -74,7 +74,7 @@ def left():
     try:
         if bot is None:
             return jsonify({"error": "Robot not connected"}), 400
-        bot.turn(90)
+        bot.turn(-90)
         return jsonify({"status": "moved forward"})
     except:
         return jsonify({"error": "Failed to move"}), 500
@@ -99,6 +99,10 @@ def llama():
         command_list = re.findall(r'\[([^]]+)\]', command)[0].split(', ')
 
         for item in command_list:
+            # if item = 'bot.turn(90)':
+            #     item = 'bot.turn(-90)'
+            # if item = 'bot.turn(-90)':
+            #     item = 'bot.turn(90)'
             print(item)
             eval(item)
             sleep(1)
